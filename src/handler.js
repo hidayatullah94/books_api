@@ -66,43 +66,43 @@ const getAllBooks = (request, h) => {
   const { name, reading, finished } = request.query;
 
   if (name) {
-    const bookk = books.filter((book) => book.name.toLowerCase().includes(name.toLowerCase()));
+    const book = books.filter((book) => book.name.toLowerCase().includes(name.toLowerCase()));
     return h.response({
       status: 'success',
       data: {
-        books: bookk.map((book) => {
-          book.id;
-          book.name;
-          book.publisher;
-        }),
+        books: book.map((book) => ({
+          id : book.id,
+          name: book.name,
+          publisher: book.publisher
+        })),
       },
     }).code(200);
   }
 
   if (reading) {
-    const bookk = books.filter((book) => Number(book.reading) === Number(reading));
+    const book = books.filter((book) => Number(book.reading) === Number(reading));
     return h.response({
       status: 'success',
       data: {
-        books: bookk.map((book) => {
-          book.id;
-          book.name;
-          book.publisher;
-        }),
+        books: book.map((book) => ({
+          id : book.id,
+          name: book.name,
+          publisher: book.publisher
+        })),
       },
     }).code(200);
   }
 
   if (finished) {
-    const bookk = books.filter((book) => Number(book.finished) === Number(book.finished));
+    const book = books.filter((book) => Number(book.finished) === Number(finished));
     return h.response({
       status: 'success',
       data: {
-        bookk: bookk.map((book) => {
-          book.id;
-          book.name;
-          book.publisher;
-        }),
+        books: book.map((book) => ({
+          id : book.id,
+          name: book.name,
+          publisher: book.publisher
+        })),
       },
     }).code(200);
   }
@@ -110,21 +110,21 @@ const getAllBooks = (request, h) => {
   return h.response({
     status: 'success',
     data: {
-      books: books.map((book) => {
-        book.id;
-        book.name;
-        book.publisher;
-      }),
+      books: books.map((book) =>  ({
+        id : book.id,
+        name: book.name,
+        publisher: book.publisher
+      })),
     },
-  });
+  }).code(200)
 };
 
 // handler get book by id
 const getBooksById = (request, h) => {
   const { bookId } = request.params;
-  const bookk = books.filter((book) => book.id === bookId)[0];
+  const book = books.filter((book) => book.id === bookId)[0];
 
-  if (bookk === undefined) {
+  if (book === undefined) {
     return h.response({
       status: 'fail',
       message: 'Buku tidak ditemukan',
@@ -134,18 +134,19 @@ const getBooksById = (request, h) => {
   return h.response({
     status: 'success',
     data: {
-      books,
+      book
     },
   }).code(200);
 };
 
 // handler edit book
 const updateBooks = (request, h) => {
-  const { id } = request.params;
+  const { bookId } = request.params;
   const {
     name, year, author, summary, publisher, pageCount, readPage, reading,
   } = request.payload;
-  const index = books.findIndex((book) => book.id === id);
+  const updatedAt= new Date().toISOString
+  const index = books.findIndex((book) => book.id === bookId);
 
   if (!name) {
     return h.response({
@@ -163,15 +164,11 @@ const updateBooks = (request, h) => {
   if (index !== -1) {
     books[index] = {
       ...books[index],
-      updatedAt: new Date().toISOString,
+      name, year, author, summary, publisher, pageCount, readPage, reading, updatedAt
     };
-
     return h.response({
       status: 'success',
       message: 'Buku berhasil diperbarui',
-      data: {
-        books: books[index],
-      },
     }).code(200);
   }
 
@@ -185,7 +182,6 @@ const updateBooks = (request, h) => {
 const deleteBooks = (request, h) => {
   const { bookId } = request.params;
   const index = books.findIndex((book) => book.id === bookId);
-
   if (index !== -1) {
     books.splice(index, 1);
 
@@ -202,5 +198,5 @@ const deleteBooks = (request, h) => {
 };
 
 module.exports = {
-  getAllBooks, addBooks, getBooksById, updateBooks, deleteBooks,
+   addBooks, getAllBooks ,getBooksById, updateBooks, deleteBooks,
 };
